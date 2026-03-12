@@ -2,7 +2,7 @@
  * 题目编号: 56
  * 题目标题: 合并区间
  * 题目标记: merge-intervals
- * 生成时间: 2026-03-05 20:37:22
+ * 生成时间: 2026-03-12 20:18:34
  *************************************************/
 
 #include <stdio.h>
@@ -10,65 +10,8 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
-
-/* 工具函数区域 */
-
-// 去除字符串首尾空白字符
-void trim(char *str) {
-    int len = strlen(str);
-    int start = 0, end = len - 1;
-
-    while (start < len && isspace(str[start])) start++;
-    while (end >= 0 && isspace(str[end])) end--;
-
-    if (start > 0 || end < len - 1) {
-        memmove(str, str + start, end - start + 1);
-        str[end - start + 1] = '\0';
-    }
-}
-
-// 解析形如 [1,2,3,4] 的数组
-int* parseIntArray(char *input, int *returnSize) {
-    trim(input);
-
-    if (input[0] == '[') input++;
-    int len = strlen(input);
-    if (input[len - 1] == ']') input[len - 1] = '\0';
-
-    int *arr = malloc(sizeof(int) * 10000);
-    int count = 0;
-
-    char *token = strtok(input, ",");
-    while (token != NULL) {
-        arr[count++] = atoi(token);
-        token = strtok(NULL, ",");
-    }
-
-    *returnSize = count;
-    return arr;
-}
-
-// 解析元素为数组的数组，形如[[1,3],[2,6],[8,10],[15,18]]
-int** parseArraySet(char* input, int* arraySize, int** arrayColSize) {
-    trim(input);
-
-    if (input[0] == '[') input++;
-    int len = strlen(input);
-    if (input[len - 1] == ']') input[len - 1] = '\0';
-
-    
-}
-
-// 打印数组
-void printIntArray(int* arr, int size) {
-    printf("[");
-    for (int i = 0; i < size; i++) {
-        printf("%d", arr[i]);
-        if (i != size - 1) printf(", ");
-    }
-    printf("]\n");
-}
-
+#include "utils.h"
+#include "utils.c" //这里为了便捷就这么写了
 
 /* 算法核心函数区域 */
 
@@ -169,13 +112,18 @@ int** merge(int** intervals, int intervalsSize, int* intervalsColSize, int* retu
 
 int main() {
     char input[10000];
-
-    // 支持多测试用例
+    
     fgets(input, sizeof(input), stdin);
+    // 解析元素为数组的数组
+    int arraySize;
+    int* arrayColSize;
+    int** numsSet = parseArraySet(input, &arraySize, &arrayColSize);
+    printf("%d\n", arraySize);
+    printIntArray(arrayColSize, arraySize);
+    printf("\n");
+    printArrSet(numsSet, arraySize, arrayColSize);
+    freeArrSet(numsSet, arraySize, arrayColSize);
 
-    // 解析第一行数组
-    int numsSize;
-    int* nums = parseIntArray(input, &numsSize);
-
+    
     return 0;
 }
