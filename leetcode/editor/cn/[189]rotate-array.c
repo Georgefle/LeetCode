@@ -88,8 +88,18 @@ void rotate(int* nums, int numsSize, int k) {
 
 int main() {
     char input[10000];
-    
+
     fgets(input, sizeof(input), stdin);
+
+    const int k = 3; // 这里反应k的值，变化时需要手动修改
+
+    int numsSize;
+    int* nums = parseIntArray(input, strlen(input), &numsSize);
+
+    rotate(nums, numsSize, k);
+
+    printIntArray(nums, numsSize);
+    free(nums);
     
     return 0;
 }
