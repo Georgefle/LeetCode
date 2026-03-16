@@ -67,6 +67,8 @@ int main() {
     int* nums = parseIntArray(input, strlen(input), &numsSize);
 
     printf("%d", maxArea(nums, numsSize));
+
+    free(nums);
     
     return 0;
 }
