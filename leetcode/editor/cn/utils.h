@@ -14,7 +14,7 @@ struct DynamicArr {
  *
  * @param input 传入的字符序列
  * @param len 字符序列中的有效字符
- * @param returnSize 一个int的地址，用于反应返回的int数组的长度
+ * @param returnSize 一个int的地址，用于反应返回的int数组的长度,长度为0则返回0
  * @return 返回一个int数组，为堆内存需要free
  */
 int* parseIntArray(char* input, int len, int* returnSize);
