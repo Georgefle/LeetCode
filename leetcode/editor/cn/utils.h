@@ -47,7 +47,7 @@ void printArrSet(int** arrSet, int arrSize, int* arrayColSize);
  *
  * @param arrSet 需要free的int*数组
  * @param arraySize 数组的大小
- * @param arrayColSize 由每一个数组元素大小组成的数组
+ * @param arrayColSize 由每一个数组元素大小组成的数组，需要free
  */
 void freeArrSet(int** arrSet, int arraySize, int* arrayColSize);
 

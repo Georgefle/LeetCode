@@ -28,20 +28,35 @@ int push(struct DynamicArr* a, int num) {
 }
 
 // 解析形如 [1,2,3,4] 的数组,不能够识别负数
+// 比较好的处理负号的方式
 int* parseIntArray(char* input, int len, int* returnSize) {
     struct DynamicArr a = {0};
 
     int num = 0;
     bool isNum = false;
+
+    // 处理负号，解析数字开始时的sign由pendingSign维护
+    int sign = 1;
+    bool pendingSign = false;
     while (*input && len) {
-        if (isdigit(*input)) {
+        if (*input == '-' && !isNum) {
+            pendingSign = true;
+        }
+        else if (isdigit((unsigned char)*input)) {
+            if (!isNum) {
+                sign = pendingSign ? -1 : 1;
+                pendingSign = false;
+            }
+
             isNum = true;
-            num = num * 10 + (*input - '0');
+            num = num * 10 + (num >= 0 ? (*input - '0') : -(*input - '0'));
         }
         else {
+            pendingSign = false;
+
             if (isNum) {
                 // 结算
-                push(&a, num);  // 这里没有处理返回值了
+                push(&a, num * sign);  // 这里没有处理返回值了
                 num = 0;
                 isNum = false;
             }
@@ -52,7 +67,7 @@ int* parseIntArray(char* input, int len, int* returnSize) {
 
     if (isNum) {
         // 意味着最后没有结算到,字符串就已经结束了，结算这最后的一次
-        push(&a, num);
+        push(&a, num * sign);
         num = 0;
         isNum = false;
     }
@@ -60,6 +75,52 @@ int* parseIntArray(char* input, int len, int* returnSize) {
     *returnSize = a.index;
     return a.arr;
 }
+
+// region
+// 处理负号时提前消费，导致parser稍微有点不够优雅
+// // 解析形如 [1,2,3,4] 的数组,不能够识别负数
+// int* parseIntArray(char* input, int len, int* returnSize) {
+//     struct DynamicArr a = {0};
+//
+//     int num = 0;
+//     bool isNum = false;
+//     while (*input && len) {
+//         if (isdigit((unsigned char)*input)) {
+//             isNum = true;
+//             num = num * 10 + (num >= 0 ? (*input - '0') : -(*input - '0'));
+//         }
+//         else {
+//             if (isNum) {
+//                 // 结算
+//                 push(&a, num);  // 这里没有处理返回值了
+//                 num = 0;
+//                 isNum = false;
+//             }
+//             if (*input == '-' && len > 1) {
+//                 if (isdigit((unsigned char)input[1])) {
+//                     isNum = true;
+//                     num = -(input[1] - '0');
+//                     input++;
+//                     len--;
+//                 }
+//             }
+//
+//         }
+//         input++;
+//         len--;
+//     }
+//
+//     if (isNum) {
+//         // 意味着最后没有结算到,字符串就已经结束了，结算这最后的一次
+//         push(&a, num);
+//         num = 0;
+//         isNum = false;
+//     }
+//
+//     *returnSize = a.index;
+//     return a.arr;
+// }
+// endregion
 
 // 解析元素为数组的数组，形如[[1,3],[2,6],[8,10],[15,18]]
 int** parseArraySet(char* input, int* arraySize, int** arrayColSize) {
@@ -93,7 +154,7 @@ int** parseArraySet(char* input, int* arraySize, int** arrayColSize) {
                     int** tmp1 = realloc(arrSet, sizeof(*tmp1) * capacity);
                     int* tmp2 = realloc(*arrayColSize, sizeof(**arrayColSize) * capacity);
                     if (!tmp1 || !tmp2) {
-                        return NULL; // 返回错误
+                        return NULL; // 返回错误，但是一般就没有处理，处理的过程会有点复杂
                     }
                     arrSet = tmp1;
                     *arrayColSize = tmp2;

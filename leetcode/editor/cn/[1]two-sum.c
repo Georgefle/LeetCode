@@ -46,6 +46,20 @@ int main() {
     char input[10000];
     
     fgets(input, sizeof(input), stdin);
+
+    // target在此处写死，改变时需要手动修改
+    int target = 9;
+
+    int numsSize;
+    int* nums = parseIntArray(input, strlen(input), &numsSize);
+
+    int returnSize;
+    int* returnArr = twoSum(nums, numsSize, target, &returnSize);
+
+    printIntArray(returnArr, returnSize);
+
+    free(nums);
+    free(returnArr);
     
     return 0;
 }

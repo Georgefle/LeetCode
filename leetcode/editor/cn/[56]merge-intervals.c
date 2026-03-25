@@ -10,6 +10,8 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <stdnoreturn.h>
+
 #include "utils.h"
 #include "utils.c" //这里为了便捷就这么写了
 
@@ -65,7 +67,8 @@ int** merge(int** intervals, int intervalsSize, int* intervalsColSize, int* retu
     int** ret = malloc(sizeof (int*) * intervalsSize);
     *returnColumnSizes = malloc(sizeof (int) * intervalsSize);
 
-    //高级写法,简洁
+    // 高级写法,简洁
+    // 注意这个过程改变了原来的intervals数组元素的元素值
     int index = 0;
     ret[index] = intervals[0];
     for (int i = 1; i < intervalsSize; i++) {
@@ -133,6 +136,7 @@ int main() {
     int returnSize;
     int* returnColSize;
     int **returnArrSet = merge(numsSet, arraySize, arrayColSize, &returnSize, &returnColSize);
+
     printf("Return the size of the collection array: %d\n", returnSize);
     printf("An array formed by the length of each array in the collection array: ");
     printIntArray(returnColSize, returnSize);
@@ -141,7 +145,9 @@ int main() {
     printArrSet(returnArrSet, returnSize, returnColSize);
     // 释放堆内存
     freeArrSet(numsSet, arraySize, arrayColSize);
-    freeArrSet(returnArrSet, returnSize, returnColSize);
+    // freeArrSet(returnArrSet, returnSize, returnColSize);直接这么写错误，因为merge函数中的实现过程，returnArrSet数组的每一个元素值（即所指向的地址）都是原封不动从已经free了的numsSet数组的对应元素值（即指向的地址）拿过来的，不能二次free
+    free(returnArrSet);
+    free(returnColSize);
 
     
     return 0;
